@@ -12,9 +12,10 @@ const GAME_COLS = 10;
 
 // variables
 let score = 0;
-let duration = 500;
+let duration = 30000;
 let downInterval;
 let tempMovingItem;
+let currentItem = [];
 
 
 const movingItem = {
@@ -53,39 +54,28 @@ function prependNewLine() {
 }
 
 function renderBlocks(moveType="") {
+    console.log('템무아 => ', tempMovingItem);
     const {type, direction, top, left} = tempMovingItem;
-    const blocksToRemove = document.querySelectorAll('.moving');
-    blocksToRemove.forEach((block) => {
-        // console.log(block);
-        block.classList.remove(type, 'moving');
-    })
     BLOCKS[type][direction].some((block) => {
         const x = block[0] + left;
         const y = block[1] + top;
         // console.log({playground});
         const target = playground.childNodes[y] ? playground.childNodes[y].childNodes[0].childNodes[x] : null;
-        const isAvailable = checkEmpty(target);
-        if (isAvailable) {
-            target.classList.add(type, "moving");
-        } else {
-            tempMovingItem = {...movingItem};
-            if (moveType === 'retry') {
-                clearInterval(downInterval);
-                showGameOverText();
-            }
-            // renderBlocks();  // 이렇게하면 콜스택이 넘쳐서 에러나서 setTimetout 함수를 이용하심
-            setTimeout(() => {
-                renderBlocks('retry');
-                if (moveType === 'top') {
-                    seizeBlock();
-                }
-            }, 0);
-            return true;
-        }
-    })
-    movingItem.left = left;
-    movingItem.top = top;
-    movingItem.direction = direction;
+        target.classList.add(type, 'moving');
+
+        currentItem = [];
+        currentItem.push(target);
+        console.log('커런트아이템 => ', currentItem);
+    });
+
+    // const blocksToRemove = document.querySelectorAll('.moving');
+    // blocksToRemove.forEach((block) => {
+    //     block.classList.remove(type, 'moving');
+    // });
+
+    // movingItem.left = left;
+    // movingItem.top = top;
+    // movingItem.direction = direction;
 }
 
 function seizeBlock() {
