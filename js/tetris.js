@@ -12,7 +12,7 @@ const GAME_COLS = 10;
 
 // variables
 let score = 0;
-let duration = 30000;
+let duration = 300000;
 let downInterval;
 let tempMovingItem;
 let currentItem = [];
@@ -54,19 +54,29 @@ function prependNewLine() {
 }
 
 function renderBlocks(moveType="") {
+    const tempPosition = [];
     console.log('템무아 => ', tempMovingItem);
+    const WTF = {...tempMovingItem};
     const {type, direction, top, left} = tempMovingItem;
-    BLOCKS[type][direction].some((block) => {
+    console.log('left => ', left );
+    console.log('WTF => ', WTF);
+    BLOCKS[type][direction].forEach((block) => {
         const x = block[0] + left;
         const y = block[1] + top;
+        console.log('x가 뭐고 => ', x);
+        console.log('아.. => ', [x,y]);
+        tempPosition.push([x,y]);
+        console.log('템포 하나씩 => ', tempPosition);
         // console.log({playground});
         const target = playground.childNodes[y] ? playground.childNodes[y].childNodes[0].childNodes[x] : null;
-        target.classList.add(type, 'moving');
+        // target.classList.add(type, 'moving');
 
         currentItem = [];
         currentItem.push(target);
         console.log('커런트아이템 => ', currentItem);
     });
+    console.log('반환된 템포 =>', tempPosition );
+    return tempPosition;
 
     // const blocksToRemove = document.querySelectorAll('.moving');
     // blocksToRemove.forEach((block) => {
@@ -136,13 +146,52 @@ function checkEmpty(target) {
 
 function moveBlock(moveType, amount) {
     tempMovingItem[moveType] += amount;
-    renderBlocks(moveType);
+    console.log('뭔데넌 => ', tempMovingItem[moveType])
+    const tempPosition = renderBlocks(moveType);
+    console.log('으어 => ', tempPosition[0]);
+
+    const xPositions = [];
+    const yPositions = [];
+
+    tempPosition.forEach((item) => {
+        xPositions.push(item[0]);
+        yPositions.push(item[1]);
+    })
+
+    // 조정작업
+    if (Math.max(...xPositions) - 9 > 0) {   // 오른쪽으로 더 나가버림
+        const xHandling = Math.max(...xPositions) - 9;
+        tempPosition.forEach((item) => {
+            item[0] = item[0] - xHandling;
+        });
+        tempMovingItem['left'] -= xHandling;
+    }
+    if (Math.min(...xPositions) < 0) {   // 왼쪽으로 더 나가버림
+        const xHandling = 0 - Math.min(...xPositions);
+        tempPosition.forEach((item) => {
+            item[0] = item[0] + xHandling;
+        });
+        tempMovingItem['left'] += xHandling;
+    }
+    console.log('조정 후 => ', tempPosition);
+    
+    const {type, direction, top, left} = tempMovingItem;
+    BLOCKS[type][direction].forEach((block) => {
+        const x = block[0] + tempMovingItem['left'];
+        const y = block[1] + tempMovingItem['top'];
+        const target = playground.childNodes[y] ? playground.childNodes[y].childNodes[0].childNodes[x] : null;
+        target.classList.add(type, 'moving');
+    });
+
+
+
 }
 
 function changeDirection() {
     const direction = tempMovingItem.direction;
     direction === 3 ? tempMovingItem.direction = 0 : tempMovingItem.direction += 1;
     renderBlocks();
+    console.log();
 }
 
 function dropBlock() {
