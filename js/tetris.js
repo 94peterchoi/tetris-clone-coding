@@ -6,6 +6,9 @@ const gameText = document.querySelector('.game-text');
 const scoreDisplay = document.querySelector('.score');
 const restartButton = document.querySelector('.game-text > button');
 
+let abc = [];
+
+
 // Setting
 const GAME_ROWS = 20;
 const GAME_COLS = 10;
@@ -53,8 +56,10 @@ function prependNewLine() {
 
 }
 
+
 function renderBlocks(moveType="") {
     const tempPosition = [];
+    const ttt = [];
     console.log('템무아 => ', tempMovingItem);
     const WTF = {...tempMovingItem};
     const {type, direction, top, left} = tempMovingItem;
@@ -65,8 +70,8 @@ function renderBlocks(moveType="") {
         const y = block[1] + top;
         console.log('x가 뭐고 => ', x);
         console.log('아.. => ', [x,y]);
-        tempPosition.push([x,y]);
-        console.log('템포 하나씩 => ', tempPosition);
+        ttt.push([x,y]);
+        console.log('템포 하나씩 => ', ttt);
         // console.log({playground});
         const target = playground.childNodes[y] ? playground.childNodes[y].childNodes[0].childNodes[x] : null;
         // target.classList.add(type, 'moving');
@@ -75,8 +80,10 @@ function renderBlocks(moveType="") {
         currentItem.push(target);
         console.log('커런트아이템 => ', currentItem);
     });
-    console.log('반환된 템포 =>', tempPosition );
-    return tempPosition;
+    console.log('반환된 템포 =>', ttt );
+    abc = [...ttt];
+    console.log('에이비씨 => ', abc);
+    return ttt;
 
     // const blocksToRemove = document.querySelectorAll('.moving');
     // blocksToRemove.forEach((block) => {
@@ -87,6 +94,8 @@ function renderBlocks(moveType="") {
     // movingItem.top = top;
     // movingItem.direction = direction;
 }
+
+console.log(abc);
 
 function seizeBlock() {
     const blockToSeize = document.querySelectorAll('.moving');
@@ -148,7 +157,12 @@ function moveBlock(moveType, amount) {
     tempMovingItem[moveType] += amount;
     console.log('뭔데넌 => ', tempMovingItem[moveType])
     const tempPosition = renderBlocks(moveType);
-    console.log('으어 => ', tempPosition[0]);
+    console.log('제일왼쪽블록 => ', tempPosition[0]);
+    console.log('x좌표 => ', tempPosition[0][0]);
+
+    console.log('제일오른쪽블록 => ', tempPosition[3]);
+    console.log('x좌표 => ', tempPosition[3][0]);
+
 
     const xPositions = [];
     const yPositions = [];
